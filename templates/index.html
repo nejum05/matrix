@@ -4,17 +4,24 @@
     <title>Matrix Multiplication</title>
 </head>
 <body>
-    <h1>Enter Two 2x2 Matrices</h1>
-    <form action="/multiply" method="post">
-        <h3>Matrix A</h3>
-        <input name="a11"> <input name="a12"><br>
-        <input name="a21"> <input name="a22"><br><br>
+    <h2>Matrix Multiplication (Any Size)</h2>
+    <form method="post">
+        <label>Matrix A (e.g. [[1, 2], [3, 4]])</label><br>
+        <textarea name="matrix_a" rows="4" cols="40"></textarea><br><br>
 
-        <h3>Matrix B</h3>
-        <input name="b11"> <input name="b12"><br>
-        <input name="b21"> <input name="b22"><br><br>
+        <label>Matrix B (e.g. [[5, 6], [7, 8]])</label><br>
+        <textarea name="matrix_b" rows="4" cols="40"></textarea><br><br>
 
-        <input type="submit" value="Multiply">
+        <button type="submit">Multiply</button>
     </form>
+
+    {% if error %}
+        <p style="color: red;"><strong>{{ error }}</strong></p>
+    {% endif %}
+
+    {% if result %}
+        <h3>Result:</h3>
+        <pre>{{ result }}</pre>
+    {% endif %}
 </body>
 </html>

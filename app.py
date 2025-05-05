@@ -2,34 +2,34 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    result = None
+    error = None
 
-@app.route('/multiply', methods=['POST'])
-def multiply():
-    try:
-        # Extract values from form
-        a11 = int(request.form['a11'])
-        a12 = int(request.form['a12'])
-        a21 = int(request.form['a21'])
-        a22 = int(request.form['a22'])
+    if request.method == 'POST':
+        try:
+            matrix_a = eval(request.form['matrix_a'])
+            matrix_b = eval(request.form['matrix_b'])
 
-        b11 = int(request.form['b11'])
-        b12 = int(request.form['b12'])
-        b21 = int(request.form['b21'])
-        b22 = int(request.form['b22'])
+            # Validate if matrices can be multiplied
+            if len(matrix_a[0]) != len(matrix_b):
+                error = "Number of columns in Matrix A must equal number of rows in Matrix B"
+            else:
+                # Matrix multiplication
+                result = []
+                for i in range(len(matrix_a)):
+                    row = []
+                    for j in range(len(matrix_b[0])):
+                        sum = 0
+                        for k in range(len(matrix_b)):
+                            sum += matrix_a[i][k] * matrix_b[k][j]
+                        row.append(sum)
+                    result.append(row)
+        except Exception as e:
+            error = f"Invalid input: {e}"
 
-        # Matrix multiplication (2x2)
-        result = [
-            [a11*b11 + a12*b21, a11*b12 + a12*b22],
-            [a21*b11 + a22*b21, a21*b12 + a22*b22]
-        ]
-
-        return render_template('result.html', result=result)
-
-    except ValueError:
-        return "Please enter valid integers only."
+    return render_template('index.html', result=result, error=error)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,42 +1,35 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
 @app.route('/')
-def home():
-    return '''
-        <h2>Matrix Multiplication</h2>
-        <form action="/multiply" method="get">
-            <label>Matrix A (rows separated by newlines, elements by spaces):</label><br>
-            <textarea name="matrix_a" rows="5" cols="30" placeholder="1 2\n3 4"></textarea><br><br>
-            <label>Matrix B (rows separated by newlines, elements by spaces):</label><br>
-            <textarea name="matrix_b" rows="5" cols="30" placeholder="5 6\n7 8"></textarea><br><br>
-            <input type="submit" value="Multiply">
-        </form>
-    '''
+def index():
+    return render_template('index.html')
 
-@app.route('/multiply')
+@app.route('/multiply', methods=['POST'])
 def multiply():
     try:
-        matrix_a = request.args.get('matrix_a', '')
-        matrix_b = request.args.get('matrix_b', '')
+        # Extract values from form
+        a11 = int(request.form['a11'])
+        a12 = int(request.form['a12'])
+        a21 = int(request.form['a21'])
+        a22 = int(request.form['a22'])
 
-        # Parse input into 2D lists
-        a = [list(map(int, row.strip().split())) for row in matrix_a.strip().split('\n')]
-        b = [list(map(int, row.strip().split())) for row in matrix_b.strip().split('\n')]
+        b11 = int(request.form['b11'])
+        b12 = int(request.form['b12'])
+        b21 = int(request.form['b21'])
+        b22 = int(request.form['b22'])
 
-        # Validate matrix multiplication condition
-        if len(a[0]) != len(b):
-            return "Error: Matrix A columns must equal Matrix B rows."
+        # Matrix multiplication (2x2)
+        result = [
+            [a11*b11 + a12*b21, a11*b12 + a12*b22],
+            [a21*b11 + a22*b21, a21*b12 + a22*b22]
+        ]
 
-        # Matrix multiplication logic
-        result = [[sum(a[i][k] * b[k][j] for k in range(len(b))) for j in range(len(b[0]))] for i in range(len(a))]
+        return render_template('result.html', result=result)
 
-        result_str = '<br>'.join([' '.join(map(str, row)) for row in result])
-        return f"<h3>Result:</h3><p>{result_str}</p><br><a href='/'>Try Again</a>"
-
-    except Exception as e:
-        return f"Error: {str(e)}<br><a href='/'>Back</a>"
+    except ValueError:
+        return "Please enter valid integers only."
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(debug=True)

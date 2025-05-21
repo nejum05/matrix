@@ -2,26 +2,47 @@
 <html>
 <head>
     <title>Matrix Multiplication</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+        form {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 300px;
+            height: 80px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Matrix Multiplication (Any Size)</h2>
     <form method="post">
+        <h2>Matrix Multiplication (Any Size)</h2>
+
         <label>Matrix A (e.g. [[1, 2], [3, 4]])</label><br>
-        <textarea name="matrix_a" rows="4" cols="40"></textarea><br><br>
+        <textarea name="matrix_a" required>{{ request.form.matrix_a or '' }}</textarea><br><br>
 
         <label>Matrix B (e.g. [[5, 6], [7, 8]])</label><br>
-        <textarea name="matrix_b" rows="4" cols="40"></textarea><br><br>
+        <textarea name="matrix_b" required>{{ request.form.matrix_b or '' }}</textarea><br><br>
 
-        <button type="submit">Multiply</button>
+        <button type="submit">Multiply</button><br><br>
+
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+
+        {% if result %}
+            <h3>Result:</h3>
+            <pre>{{ result }}</pre>
+        {% endif %}
     </form>
-
-    {% if error %}
-        <p style="color: red;"><strong>{{ error }}</strong></p>
-    {% endif %}
-
-    {% if result %}
-        <h3>Result:</h3>
-        <pre>{{ result }}</pre>
-    {% endif %}
 </body>
 </html>
